@@ -1,17 +1,41 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
 body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
 }
 
 header {
+  margin-top: 20px;
   text-align: center;
-  margin: 20px 0;
 }
 
 h1 {
-  font-size: 2em;
+  font-size: 2.5em;
+}
+
+.modes button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 1.1em;
+  cursor: pointer;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+.modes button:hover {
+  background-color: #555;
 }
 
 #settings, #leaderboard {
@@ -19,33 +43,64 @@ h1 {
 }
 
 #gameBoard {
+  display: flex;
+  justify-content: center;
   margin: 20px;
 }
 
 #board {
   display: grid;
-  gap: 5px;
+  gap: 8px;
 }
 
 .cell {
-  width: 50px;
-  height: 50px;
-  background-color: #f0f0f0;
+  width: 60px;
+  height: 60px;
+  background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2em;
   cursor: pointer;
-  border: 1px solid #ccc;
+  transition: transform 0.2s;
 }
 
-.hidden {
-  display: none;
+.cell:hover {
+  transform: scale(1.1);
 }
 
 button {
-  margin-top: 10px;
   padding: 8px 16px;
   font-size: 1em;
   cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Themes */
+body.dark {
+  background-color: #222;
+  color: white;
+}
+
+body.neon {
+  background-color: #000;
+  color: #0ff;
+}
+
+body.neon .cell {
+  background-color: #0ff;
+  color: #000;
+}
+
+body.neon button, body.dark button {
+  background-color: #0ff;
+  color: black;
 }
