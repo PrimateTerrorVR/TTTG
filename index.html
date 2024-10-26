@@ -3,24 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tic Tac Toe - Ranked Mode</title>
+  <title>Advanced Tic Tac Toe</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
     <h1>Tic Tac Toe</h1>
-    <p>Ranked Mode | Leaderboard</p>
+    <div class="modes">
+      <button onclick="selectMode('Player')">Player vs Player</button>
+      <button onclick="selectMode('AI')">Player vs AI</button>
+    </div>
   </header>
 
   <main>
     <section id="settings">
       <h2>Game Settings</h2>
-      <label for="boardSize">Board Size:</label>
+      <label>Board Size:</label>
       <input type="number" id="boardSize" min="3" max="10" value="3">
       
-      <label for="winningCondition">Winning Condition:</label>
+      <label>Winning Condition:</label>
       <input type="number" id="winningCondition" min="3" max="10" value="3">
       
+      <label>Theme:</label>
+      <select id="theme" onchange="changeTheme()">
+        <option value="classic">Classic</option>
+        <option value="dark">Dark Mode</option>
+        <option value="neon">Neon</option>
+      </select>
+
       <button onclick="startGame()">Start Game</button>
     </section>
 
