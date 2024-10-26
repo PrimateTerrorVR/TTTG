@@ -22,7 +22,7 @@ h1 {
   font-size: 2.5em;
 }
 
-.modes button {
+.settings button {
   margin: 10px;
   padding: 10px 20px;
   font-size: 1.1em;
@@ -34,11 +34,11 @@ h1 {
   transition: background 0.3s;
 }
 
-.modes button:hover {
+.settings button:hover {
   background-color: #555;
 }
 
-#settings, #leaderboard {
+#settings, #locker {
   margin: 20px;
 }
 
@@ -84,23 +84,16 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* Themes */
-body.dark {
-  background-color: #222;
-  color: white;
+#locker div {
+  display: flex;
+  gap: 10px;
 }
 
-body.neon {
-  background-color: #000;
-  color: #0ff;
+.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-body.neon .cell {
-  background-color: #0ff;
-  color: #000;
-}
-
-body.neon button, body.dark button {
-  background-color: #0ff;
-  color: black;
+.unlocked {
+  cursor: pointer;
 }
