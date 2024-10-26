@@ -8,8 +8,8 @@
 </head>
 <body>
   <header>
-    <h1>Tic Tac Toe</h1>
-    <div class="modes">
+    <h1>Advanced Tic Tac Toe</h1>
+    <div class="settings">
       <button onclick="selectMode('Player')">Player vs Player</button>
       <button onclick="selectMode('AI')">Player vs AI</button>
     </div>
@@ -18,17 +18,10 @@
   <main>
     <section id="settings">
       <h2>Game Settings</h2>
-      <label>Board Size:</label>
-      <input type="number" id="boardSize" min="3" max="10" value="3">
-      
-      <label>Winning Condition:</label>
-      <input type="number" id="winningCondition" min="3" max="10" value="3">
-      
-      <label>Theme:</label>
-      <select id="theme" onchange="changeTheme()">
-        <option value="classic">Classic</option>
-        <option value="dark">Dark Mode</option>
-        <option value="neon">Neon</option>
+      <label>Symbol Selection:</label>
+      <select id="playerSymbol" onchange="changeSymbol()">
+        <option value="X">X</option>
+        <option value="O">O</option>
       </select>
 
       <button onclick="startGame()">Start Game</button>
@@ -39,9 +32,10 @@
       <button onclick="resetGame()">Reset Game</button>
     </section>
 
-    <section id="leaderboard">
-      <h2>Leaderboard</h2>
-      <div id="leaderboardList"></div>
+    <section id="locker">
+      <h2>Locker</h2>
+      <p>Coins: <span id="coinCount">0</span></p>
+      <div id="unlockedSymbols"></div>
     </section>
   </main>
 
