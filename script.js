@@ -2,7 +2,14 @@ let boardSize = 3;
 let winningCondition = 3;
 let board = [];
 let currentPlayer = 'X';
+let gameMode = 'Player';
 let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+
+// Select game mode
+function selectMode(mode) {
+  gameMode = mode;
+  document.getElementById('settings').classList.remove('hidden');
+}
 
 // Start the game
 function startGame() {
@@ -34,8 +41,10 @@ function renderBoard() {
 // Make a move
 function makeMove(row, col) {
   if (board[row][col]) return;
+
   board[row][col] = currentPlayer;
   renderBoard();
+
   if (checkWin(row, col)) {
     alert(`${currentPlayer} wins!`);
     updateLeaderboard(currentPlayer);
@@ -45,17 +54,34 @@ function makeMove(row, col) {
     resetGame();
   } else {
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    if (gameMode === 'AI' && currentPlayer === 'O') {
+      setTimeout(aiMove, 500);
+    }
   }
+}
+
+// AI Move
+function aiMove() {
+  let emptyCells = [];
+  board.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      if (!cell) emptyCells.push([rowIndex, colIndex]);
+    });
+  });
+  
+  const [aiRow, aiCol] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+  makeMove(aiRow, aiCol);
 }
 
 // Check for a win
 function checkWin(row, col) {
   const directions = [
-    [[0, 1], [0, -1]], // Horizontal
-    [[1, 0], [-1, 0]], // Vertical
-    [[1, 1], [-1, -1]], // Diagonal
-    [[1, -1], [-1, 1]]  // Anti-diagonal
+    [[0, 1], [0, -1]],
+    [[1, 0], [-1, 0]],
+    [[1, 1], [-1, -1]],
+    [[1, -1], [-1, 1]]
   ];
+
   return directions.some(direction => {
     return countInDirection(row, col, direction[0]) + countInDirection(row, col, direction[1]) + 1 >= winningCondition;
   });
@@ -74,7 +100,7 @@ function countInDirection(row, col, direction) {
   return count;
 }
 
-// Update the leaderboard
+// Update leaderboard
 function updateLeaderboard(winner) {
   leaderboard.push({ player: winner, date: new Date().toLocaleString() });
   leaderboard.sort((a, b) => b.date - a.date);
@@ -85,17 +111,20 @@ function updateLeaderboard(winner) {
 // Display leaderboard
 function displayLeaderboard() {
   const leaderboardList = document.getElementById('leaderboardList');
-  leaderboardList.innerHTML = leaderboard
-    .map(entry => `<p>${entry.player} - ${entry.date}</p>`)
-    .join('');
+  leaderboardList.innerHTML = leaderboard.map(entry => `<p>${entry.player} - ${entry.date}</p>`).join('');
 }
 
-// Reset the game
+// Change theme
+function changeTheme() {
+  document.body.className = document.getElementById('theme').value;
+}
+
+// Reset game
 function resetGame() {
   document.getElementById('settings').classList.remove('hidden');
   document.getElementById('gameBoard').classList.add('hidden');
   board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
 }
 
-// Load leaderboard on page load
+// Load leaderboard
 window.onload = displayLeaderboard;
