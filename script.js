@@ -1,35 +1,24 @@
-let boardSize = 3;
-let board = [];
-let currentPlayer = 'X';
-let gameMode = 'Player';
+// Initialize core variables for the game state
 let coins = parseInt(localStorage.getItem('coins')) || 0;
-let unlockedSymbols = JSON.parse(localStorage.getItem('unlockedSymbols')) || ['X', 'O'];
+let unlockedItems = JSON.parse(localStorage.getItem('unlockedItems')) || ['X', 'O'];
 let playerSymbol = 'X';
 let aiSymbol = 'O';
+let boardSize = 3;
+let board = [];
+let gameMode = 'PvP';
+let currentPlayer = playerSymbol;
 
-// Set initial coin count
-document.getElementById('coinCount').textContent = coins;
+// Set up initial coin display and update inventory on load
+document.getElementById('coins').textContent = coins;
+updateLocker();
 
-// Update locker
-function updateLocker() {
-  const lockerDiv = document.getElementById('unlockedSymbols');
-  lockerDiv.innerHTML = '';
-  unlockedSymbols.forEach(symbol => {
-    const symbolDiv = document.createElement('div');
-    symbolDiv.textContent = symbol;
-    symbolDiv.classList.add('unlocked');
-    symbolDiv.onclick = () => selectSymbol(symbol);
-    lockerDiv.appendChild(symbolDiv);
-  });
-}
-
-// Select game mode
-function selectMode(mode) {
+// Game mode selection
+function setGameMode(mode) {
   gameMode = mode;
   document.getElementById('settings').classList.remove('hidden');
 }
 
-// Start the game
+// Start game with chosen settings
 function startGame() {
   board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
   currentPlayer = playerSymbol;
@@ -38,7 +27,7 @@ function startGame() {
   document.getElementById('gameBoard').classList.remove('hidden');
 }
 
-// Render the board
+// Render Tic Tac Toe board
 function renderBoard() {
   const boardElement = document.getElementById('board');
   boardElement.innerHTML = '';
@@ -54,7 +43,7 @@ function renderBoard() {
   });
 }
 
-// Make a move
+// Making a move
 function makeMove(row, col) {
   if (board[row][col]) return;
   board[row][col] = currentPlayer;
@@ -62,77 +51,72 @@ function makeMove(row, col) {
 
   if (checkWin(row, col)) {
     alert(`${currentPlayer} wins!`);
-    awardCoins(currentPlayer === playerSymbol);
+    awardCoins();
     resetGame();
   } else if (board.flat().every(cell => cell)) {
     alert('It\'s a tie!');
     resetGame();
   } else {
     currentPlayer = currentPlayer === playerSymbol ? aiSymbol : playerSymbol;
-    if (gameMode === 'AI' && currentPlayer === aiSymbol) setTimeout(aiMove, 500);
+    if (gameMode !== 'PvP' && currentPlayer === aiSymbol) aiMove();
   }
-}
-
-// AI Move
-function aiMove() {
-  let emptyCells = [];
-  board.forEach((row, rowIndex) => {
-    row.forEach((cell, colIndex) => {
-      if (!cell) emptyCells.push([rowIndex, colIndex]);
-    });
-  });
-  
-  const [aiRow, aiCol] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-  makeMove(aiRow, aiCol);
 }
 
 // Check for a win
 function checkWin(row, col) {
-  const directions = [
-    [[0, 1], [0, -1]],
-    [[1, 0], [-1, 0]],
-    [[1, 1], [-1, -1]],
-    [[1, -1], [-1, 1]]
-  ];
-
-  return directions.some(direction => {
-    return countInDirection(row, col, direction[0]) + countInDirection(row, col, direction[1]) + 1 >= boardSize;
+  const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+  return directions.some(([dx, dy]) => {
+    let count = 1;
+    count += countInDirection(row, col, dx, dy);
+    count += countInDirection(row, col, -dx, -dy);
+    return count >= boardSize;
   });
 }
 
-function countInDirection(row, col, direction) {
+// Count symbols in a direction
+function countInDirection(row, col, dx, dy) {
   let count = 0;
-  let [dRow, dCol] = direction;
-  let newRow = row + dRow;
-  let newCol = col + dCol;
-  while (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize && board[newRow][newCol] === currentPlayer) {
+  let [r, c] = [row + dx, col + dy];
+  while (r >= 0 && c >= 0 && r < boardSize && c < boardSize && board[r][c] === currentPlayer) {
     count++;
-    newRow += dRow;
-    newCol += dCol;
+    r += dx;
+    c += dy;
   }
   return count;
 }
 
-// Award coins to the player and update local storage
-function awardCoins(win) {
-  if (win) {
-    coins += 10;
+// Award coins
+function awardCoins() {
+  coins += 10;
+  localStorage.setItem('coins', coins);
+  document.getElementById('coins').textContent = coins;
+}
+
+// AI move logic
+function aiMove() {
+  // Implement AI logic here, e.g., random for Easy, smarter for Hard
+}
+
+// Update locker UI
+function updateLocker() {
+  const lockerDiv = document.getElementById('unlockedItems');
+  lockerDiv.innerHTML = '';
+  unlockedItems.forEach(item => {
+    const itemElement = document.createElement('div');
+    itemElement.textContent = item;
+    itemElement.classList.add('unlocked');
+    itemElement.onclick = () => selectItem(item);
+    lockerDiv.appendChild(itemElement);
+  });
+}
+
+// Purchase item in shop
+function purchaseItem(item, cost) {
+  if (coins >= cost && !unlockedItems.includes(item)) {
+    unlockedItems.push(item);
+    coins -= cost;
     localStorage.setItem('coins', coins);
-    document.getElementById('coinCount').textContent = coins;
+    localStorage.setItem('unlockedItems', JSON.stringify(unlockedItems));
+    updateLocker();
   }
 }
-
-// Reset game
-function resetGame() {
-  board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
-  document.getElementById('settings').classList.remove('hidden');
-  document.getElementById('gameBoard').classList.add('hidden');
-}
-
-// Select symbol
-function selectSymbol(symbol) {
-  playerSymbol = symbol;
-}
-
-// Load locker on start
-window.onload = updateLocker;
