@@ -1,9 +1,27 @@
 let boardSize = 3;
-let winningCondition = 3;
 let board = [];
 let currentPlayer = 'X';
 let gameMode = 'Player';
-let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+let coins = parseInt(localStorage.getItem('coins')) || 0;
+let unlockedSymbols = JSON.parse(localStorage.getItem('unlockedSymbols')) || ['X', 'O'];
+let playerSymbol = 'X';
+let aiSymbol = 'O';
+
+// Set initial coin count
+document.getElementById('coinCount').textContent = coins;
+
+// Update locker
+function updateLocker() {
+  const lockerDiv = document.getElementById('unlockedSymbols');
+  lockerDiv.innerHTML = '';
+  unlockedSymbols.forEach(symbol => {
+    const symbolDiv = document.createElement('div');
+    symbolDiv.textContent = symbol;
+    symbolDiv.classList.add('unlocked');
+    symbolDiv.onclick = () => selectSymbol(symbol);
+    lockerDiv.appendChild(symbolDiv);
+  });
+}
 
 // Select game mode
 function selectMode(mode) {
@@ -13,10 +31,8 @@ function selectMode(mode) {
 
 // Start the game
 function startGame() {
-  boardSize = parseInt(document.getElementById('boardSize').value);
-  winningCondition = parseInt(document.getElementById('winningCondition').value);
   board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
-  currentPlayer = 'X';
+  currentPlayer = playerSymbol;
   renderBoard();
   document.getElementById('settings').classList.add('hidden');
   document.getElementById('gameBoard').classList.remove('hidden');
@@ -41,22 +57,19 @@ function renderBoard() {
 // Make a move
 function makeMove(row, col) {
   if (board[row][col]) return;
-
   board[row][col] = currentPlayer;
   renderBoard();
 
   if (checkWin(row, col)) {
     alert(`${currentPlayer} wins!`);
-    updateLeaderboard(currentPlayer);
+    awardCoins(currentPlayer === playerSymbol);
     resetGame();
   } else if (board.flat().every(cell => cell)) {
     alert('It\'s a tie!');
     resetGame();
   } else {
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    if (gameMode === 'AI' && currentPlayer === 'O') {
-      setTimeout(aiMove, 500);
-    }
+    currentPlayer = currentPlayer === playerSymbol ? aiSymbol : playerSymbol;
+    if (gameMode === 'AI' && currentPlayer === aiSymbol) setTimeout(aiMove, 500);
   }
 }
 
@@ -83,7 +96,7 @@ function checkWin(row, col) {
   ];
 
   return directions.some(direction => {
-    return countInDirection(row, col, direction[0]) + countInDirection(row, col, direction[1]) + 1 >= winningCondition;
+    return countInDirection(row, col, direction[0]) + countInDirection(row, col, direction[1]) + 1 >= boardSize;
   });
 }
 
@@ -100,31 +113,26 @@ function countInDirection(row, col, direction) {
   return count;
 }
 
-// Update leaderboard
-function updateLeaderboard(winner) {
-  leaderboard.push({ player: winner, date: new Date().toLocaleString() });
-  leaderboard.sort((a, b) => b.date - a.date);
-  localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-  displayLeaderboard();
-}
-
-// Display leaderboard
-function displayLeaderboard() {
-  const leaderboardList = document.getElementById('leaderboardList');
-  leaderboardList.innerHTML = leaderboard.map(entry => `<p>${entry.player} - ${entry.date}</p>`).join('');
-}
-
-// Change theme
-function changeTheme() {
-  document.body.className = document.getElementById('theme').value;
+// Award coins to the player and update local storage
+function awardCoins(win) {
+  if (win) {
+    coins += 10;
+    localStorage.setItem('coins', coins);
+    document.getElementById('coinCount').textContent = coins;
+  }
 }
 
 // Reset game
 function resetGame() {
+  board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
   document.getElementById('settings').classList.remove('hidden');
   document.getElementById('gameBoard').classList.add('hidden');
-  board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
 }
 
-// Load leaderboard
-window.onload = displayLeaderboard;
+// Select symbol
+function selectSymbol(symbol) {
+  playerSymbol = symbol;
+}
+
+// Load locker on start
+window.onload = updateLocker;
