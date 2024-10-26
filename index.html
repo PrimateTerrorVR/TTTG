@@ -3,27 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Tic Tac Toe</title>
+  <title>Ultimate Tic Tac Toe</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>Advanced Tic Tac Toe</h1>
-    <div class="settings">
-      <button onclick="selectMode('Player')">Player vs Player</button>
-      <button onclick="selectMode('AI')">Player vs AI</button>
+    <h1>Tic Tac Toe: Ultimate Edition</h1>
+    <div id="coinDisplay">Coins: <span id="coins">0</span></div>
+    <div class="game-modes">
+      <button onclick="setGameMode('PvP')">Player vs Player</button>
+      <button onclick="setGameMode('EasyAI')">Easy AI</button>
+      <button onclick="setGameMode('MedAI')">Medium AI</button>
+      <button onclick="setGameMode('HardAI')">Hard AI</button>
     </div>
   </header>
 
   <main>
     <section id="settings">
       <h2>Game Settings</h2>
-      <label>Symbol Selection:</label>
-      <select id="playerSymbol" onchange="changeSymbol()">
+      <label for="symbolSelect">Symbol:</label>
+      <select id="symbolSelect" onchange="updateSymbol()">
         <option value="X">X</option>
         <option value="O">O</option>
       </select>
-
       <button onclick="startGame()">Start Game</button>
     </section>
 
@@ -35,7 +37,15 @@
     <section id="locker">
       <h2>Locker</h2>
       <p>Coins: <span id="coinCount">0</span></p>
-      <div id="unlockedSymbols"></div>
+      <div id="unlockedItems"></div>
+    </section>
+
+    <section id="shop">
+      <h2>Shop</h2>
+      <p>Coins: <span id="coinBalance">0</span></p>
+      <div id="shopItems">
+        <!-- Shop items go here -->
+      </div>
     </section>
   </main>
 
