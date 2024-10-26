@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe - Ranked Mode</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Tic Tac Toe</h1>
+    <p>Ranked Mode | Leaderboard</p>
+  </header>
+
+  <main>
+    <section id="settings">
+      <h2>Game Settings</h2>
+      <label for="boardSize">Board Size:</label>
+      <input type="number" id="boardSize" min="3" max="10" value="3">
+      
+      <label for="winningCondition">Winning Condition:</label>
+      <input type="number" id="winningCondition" min="3" max="10" value="3">
+      
+      <button onclick="startGame()">Start Game</button>
+    </section>
+
+    <section id="gameBoard" class="hidden">
+      <div id="board"></div>
+      <button onclick="resetGame()">Reset Game</button>
+    </section>
+
+    <section id="leaderboard">
+      <h2>Leaderboard</h2>
+      <div id="leaderboardList"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
